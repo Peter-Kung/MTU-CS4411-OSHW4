@@ -39,20 +39,20 @@ int main()
 		scanf("%d",&shmptr[i]); 
 		printf("%d  ",shmptr[i]); 	
 	}
-	puts("");
+	puts("\n");
 
 	puts("*** MAIN: about to spawn processes");
 	char *para[4];
-	for (int i = 0;i < 4;++i)
+	for (int i = 0;i < 3;++i)
 		para[i] = (char *)calloc(20, sizeof(char));
 	
 	para[0][0] = '0';
-	snprintf (para[1], 10, "%d",n);
+	snprintf (para[1], 10, "%d",n-1);
 	snprintf (para[2], 20, "%d",shm_id);
 	para[3] = NULL;	
-	for (int i = 0;i < 3;++i)
-		puts(para[i]);
 
+//		printf("### PROC(%u): entering with a[%d..%d]\n", getpid(), 0, n-1);
+//		puts("..........");
 	int pid = fork();
 	if (pid < 0) {
 		perror("fork failed");
@@ -67,8 +67,15 @@ int main()
 	int status = 0;
 	wait(&status);
 
+	puts("*** MAIN: sorted array:");
+	printf("     ");
+	for (int i = 0;i < n;++i)
+		printf("%d ", shmptr[i]);
+	puts("");
+
 detachedSHM:
 	shmctl(shm_id, IPC_RMID, NULL);
 
+	puts("*** MAIN: shared memory successfully detached\n*** MAIN: shared memory successfully removed");
 	
 }
